@@ -1,51 +1,102 @@
-// controller/bookingController.js
-const Booking = require('../model/booking');
-const Flight = require('../model/flight');
+const flightBooking = require('../model/booking');
+const User = require('../model/auth');
+const { parse } = require('date-fns');
 
 const createBooking = async (req, res) => {
+  const { _id } = req.user;
   try {
-    const { userId, flightId, seats } = req.body;
+    const user = await User.findById(_id);
+    if (!user) {
+      return res.status(404).json({ message: 'No user found' });
+    }
+    const {
+      tripType,
+      availableAirline,
+      departureAirport,
+      destinationAirport,
+      departureDate,
+      returnDate,
+      passengers,
+      contactInfo,
+      addOns
+    } = req.body;
 
-    const flight = await Flight.findById(flightId);
-    if (!flight) return res.status(404).json({ message: "Flight not found" });
-
-    if (flight.seatsAvailable < seats) {
-      return res.status(400).json({ message: "Not enough seats available" });
+    if (!tripType || !availableAirline || !departureAirport ||
+      !destinationAirport || !departureDate || !passengers || !contactInfo) {
+      return res.status(400).json({ message: 'Please make sure all required fields are filled' });
     }
 
-    const totalPrice = flight.price * seats;
+    if (!Array.isArray(passengers) || passengers.length === 0) {
+      return res.status(400).json({ message: 'At least one passenger is required' });
+    }
 
-    const booking = await Booking.create({
-      user: userId,
-      flight: flightId,
-      seatsBooked: seats,
-      totalPrice
+    if (!contactInfo.phone) {
+      return res.status(400).json({ message: 'Complete contact information is required' });
+    }
+
+    if (tripType === 'round-trip' && !returnDate) {
+      return res.status(400).json({ message: 'Return date is required for round trips' });
+    }
+
+    // Parse with date-fns
+    const parsedDeparture = parse(departureDate, 'yyyy-MM-dd hh:mma', new Date());
+    const parsedReturn = returnDate ? parse(returnDate, 'yyyy-MM-dd hh:mma', new Date()) : null;
+
+    const bookFlight = await flightBooking.create({
+      userId: _id,
+      tripType,
+      availableAirline,
+      departureAirport,
+      destinationAirport,
+      departureDate: parsedDeparture,
+      returnDate: parsedReturn,
+      passengers: passengers.map(p => ({
+        ...p,
+        dob: p.dob ? parse(p.dob, 'yyyy-MM-dd', new Date()) : null,
+        passportExpiry: p.passportExpiry ? parse(p.passportExpiry, 'yyyy-MM-dd', new Date()) : null
+      })),
+      contactInfo,
+      addOns: addOns || {
+        extraLuggage: false,
+        travelInsurance: false,
+        hotelBooking: false
+      }
+    });
+    console.log(bookFlight, 'book');
+
+    res.status(201).json({
+      message: 'Flight booked successfully',
+      data: bookFlight
     });
 
-    // Update available seats
-    flight.seatsAvailable -= seats;
-    await flight.save();
-
-    res.status(201).json({ message: "Booking successful", booking });
   } catch (error) {
-    res.status(500).json({ message: "Error creating booking", error });
+    console.error('Booking error:', error);
+    res.status(500).json({
+      message: 'An error has occurred',
+      error: error.message
+    });
   }
 };
 
-const getUserBookings = async (req, res) => {
+const getUserBooking = async (req, res) => {
+  const { id } = req.params
   try {
-    const { userId } = req.params;
-    const bookings = await Booking.find({ user: userId })
-      .populate("flight")
-      .sort({ createdAt: -1 });
-
-    res.json(bookings);
+    const booking = await flightBooking.find({ userId: id });
+    res.status(201).json({
+      message: 'user flight booking',
+      data: booking
+    })
   } catch (error) {
-    res.status(500).json({ message: "Error fetching bookings", error });
+    console.log('error', error);
+    res.status(400).json({
+      message: 'An eror has occur',
+      errors: error.message
+    })
   }
-};
+
+}
 
 module.exports = {
   createBooking,
-  getUserBookings
-};
+  getUserBooking
+}

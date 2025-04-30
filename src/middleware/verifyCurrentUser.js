@@ -15,7 +15,7 @@ const verifyCurrentUser = async (req, res, next) => {
         });
     }
 
-    console.log("token:: " + token);
+    // console.log("token:: " + token);
 
     try {
         const decoded = jwt.verify(token, process.env.SECRET_KEY);

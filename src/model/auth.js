@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
-
 const { Schema } = mongoose;
 
-// Validator functions moved outside the schema
 const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
 const validatePassword = (password) => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password);
@@ -37,9 +35,9 @@ const userSchema = new Schema({
     },
     select: false,
   },
-  contact: {
-    type: Number,
-    required: [true, 'phonenumber is required']
+  country: {
+    type: String,
+    required: [true, 'country is required']
   },
   profileImage: {
     type: String,

@@ -19,9 +19,9 @@ const transporter = nodemailer.createTransport({
 
 const signupUser = async (req, res) => {
     try {
-        const { name, email, password, contact } = req.body;
+        const { name, email, password, country } = req.body;
 
-        if (!name || !email || !password || !contact) {
+        if (!name || !email || !password || !country) {
             return res.status(400).json({
                 message: 'All fields (name, email, password, contact) are required'
             });
@@ -40,17 +40,14 @@ const signupUser = async (req, res) => {
         const user = await User.create({
             name: name,
             email: email,
-            password: hashedPassword,
-            contact: contact,
+            password: hashedPassword.trim(),
+            country: country,
             // profileImage: req.file.path
         });
-
-        // const token = generateToken(user._id, user.email);
 
         res.status(201).json({
             message: 'User created successfully',
             data: user,
-            // token: token,
             expiresIn: process.env.JWT_LIFE_TIMEOUT,
             profileImage: user.profileImage
         });
@@ -132,7 +129,7 @@ const forgotPassword = async (req, res) => {
         const resetToken = crypto.randomBytes(32).toString('hex');
         const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
 
-        user.resetPasswordToken = hashedToken;
+        user.resetPassword = hashedToken;
         user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
         await user.save();
 

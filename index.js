@@ -187,18 +187,19 @@ const port = 4000
 
 const users = require("./src/route/autth");
 const uploadImage = require('./src/route/upload');
-// const check = require('./src/route/flight');
+const booking = require('./src/route/booking');
+const searching = require('./src/route/flight');
 
 app.use('/api/v1/', users);
 app.use('/api/img/', uploadImage);
-// app.use('/api/v1/', check );
+app.use('/api/v1/', booking);
+app.use('/api/v2/', searching);
 
 
 function start() {
     app.listen(port, () => {
         const mongooseConnect = mongoose.connect(process.env.mongooseDB)
         if (mongooseConnect) {
-            console.log('server connected to mongoose database');
             console.log(`Server is running on port ${port}`)
         }
         else {

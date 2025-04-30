@@ -1,9 +1,12 @@
-// route/bookingRoutes.js
 const express = require('express');
 const router = express.Router();
-const { createBooking, getUserBookings } = require('../controller/booking');
 
-router.post('/bookings', createBooking);
-router.get('/bookings/:userId', getUserBookings);
+const { createBooking,
+    getUserBooking
+} = require('../controller/booking');
+const verifyCurrentUser = require('../middleware/verifyCurrentUser');
+
+router.post('/bookings', verifyCurrentUser, createBooking);
+router.get('/getUserBooking/:id', verifyCurrentUser,  getUserBooking)
 
 module.exports = router;

@@ -1,54 +1,33 @@
-// const mongoose = require('mongoose');
-// const { Schema } = mongoose;
+const mongoose = require('mongoose');
+const { Schema } = mongoose
 
-// const searchSchema = new Schema({
-//   departure: {
-//     type: String,
-//     required: [true, 'Departure is required'],
-//     trim: true,
-//   },
-//   arrival: {
-//     type: String,
-//     required: [true, 'Arrival is required'],
-//     trim: true,
-//   },
-//   date: {
-//     type: Date,
-//     required: [true, 'Departure date is required'],
-//   },
-//   returnDate: {
-//     type: Date,
-//     required: false,
-//   },
-//   passenger: {
-//     type: Number,
-//     required: [true, 'Passenger count is required'],
-//     min: [1, 'At least one passenger required'],
-//   },
-//   travelClass: {
-//     type: String,
-//     enum: ['economy', 'business', 'first'],
-//     default: 'economy',
-//   }
-// }, { timestamps: true });
+const searchFlight = new Schema({
+  tripType: {
+    type: String,
+    enum: ['one-way', 'round-trip'],
+    required: true
+  },
+  departureAirport: {
+    type: String,
+    required: [true, 'this field is required']
+  },
+  destinationAirport: {
+    type: String,
+    required: [true, 'this field is required']
+  },
+  departureDate: {
+    type: Date,
+    required: [true, 'this field is required']
+  },
+  returnDate: {
+    type: Date
+  },
+  passenger: {
+    type: Number,
+    required: [true, 'this field is required']
+  }
+})
 
-// const Search = mongoose.model('Search', searchSchema);
-// module.exports = Search
+const Search = mongoose.model('search-flights', searchFlight);
 
-// const mongoose = require('mongoose');
-// const {Schema} = mongoose
-
-const flightSchema = new Schema({
-  airline: { type: String, required: true },
-  flightNumber: { type: String, required: true },
-  origin: { type: String, required: true },
-  destination: { type: String, required: true },
-  departureTime: { type: Date, required: true },
-  arrivalTime: { type: Date, required: true },
-  price: { type: Number, required: true },
-  seatsAvailable: { type: Number, required: true }
-}, { timestamps: true });
-
-const flight = mongoose.model(flightSchema, 'flight');
-
-module.exports = flight
+module.exports = Search
