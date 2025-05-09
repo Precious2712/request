@@ -9,6 +9,7 @@ app.use(express.json());
 app.use(cors());
 
 const port = 4000
+require('./src/nodemailer/mailer');
 
 // let db = {
 //     id: Number,
