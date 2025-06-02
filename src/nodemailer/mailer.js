@@ -21,7 +21,7 @@ async function sendEmail() {
     try {
         const info = await transporter.sendMail({
             from: `"Your Company Name" <${process.env.GMAIL_USER}>`, 
-            to: "timiebabs@gmail.com", 
+            to: "presh001@gmail.com", 
             subject: "🎉 Welcome to Our Platform!", 
             text: "Thanks for joining us!", 
             html: `
