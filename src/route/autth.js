@@ -25,7 +25,7 @@ route.post(
 )
 
 route.post(
-    '/resetPassword',
+    '/reset-password',
     resetPassword
 )
 

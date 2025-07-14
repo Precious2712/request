@@ -3,8 +3,6 @@ const { Schema } = mongoose;
 
 const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-const validatePassword = (password) => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password);
-
 const userSchema = new Schema({
   name: {
     type: String,
@@ -24,15 +22,6 @@ const userSchema = new Schema({
   password: {
     type: String,
     required: [true, 'Password is required'],
-    validate: {
-      validator: validatePassword,
-      message: () => `Password must contain at least:
-       - 8 characters
-       - 1 uppercase letter
-       - 1 lowercase letter
-       - 1 number
-       - 1 special character (@$!%*?&)`,
-    },
     select: false,
   },
   country: {
@@ -42,8 +31,15 @@ const userSchema = new Schema({
   profileImage: {
     type: String,
     required: null,
+  },
+  resetPasswordToken: {
+    type: String,
+    select: false
+  },
+  resetPasswordExpires: {
+    type: Date,
+    select: false
   }
-
 }, {
   timestamps: true,
 });

@@ -9,7 +9,7 @@ app.use(express.json());
 app.use(cors());
 
 const port = 4000
-require('./src/nodemailer/mailer');
+// require('./src/nodemailer/mailer');
 
 // let db = {
 //     id: Number,
@@ -206,7 +206,7 @@ function start() {
         else {
             console.log('Failed to connect to mongoose database');
         }
-    })
+    });
 }
 
 start();

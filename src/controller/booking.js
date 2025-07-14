@@ -93,10 +93,33 @@ const getUserBooking = async (req, res) => {
       errors: error.message
     })
   }
+}
 
+const deleteFlightById = async (req, res) => {
+  const {id} = req.params
+  try {
+    const remove = await flightBooking.findByIdAndDelete({_id: id});
+    if (!remove) {
+      res.status(400).json({
+        message: 'could not find id in database'
+      });
+    }
+    console.log(remove);
+    
+    res.json(({
+      message: 'Item deleted successfully',
+      remove
+    }))
+  } catch (error) {
+    res.status(404).json({
+      message: 'An error has occur',
+      errors: error
+    })
+  }
 }
 
 module.exports = {
   createBooking,
-  getUserBooking
+  getUserBooking,
+  deleteFlightById
 }

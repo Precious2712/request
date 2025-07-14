@@ -2,7 +2,6 @@ const jwt = require("jsonwebtoken");
 const User = require('../model/auth')
 
 const verifyCurrentUser = async (req, res, next) => {
-    // Get token from header (remove 'Bearer ' if present)
     let token = req.header("Authorization");
     if (token && token.startsWith('Bearer ')) {
         token = token.slice(7, token.length).trimLeft();

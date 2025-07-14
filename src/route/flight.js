@@ -9,7 +9,7 @@ const { createFlight,
 const verifyCurrentUser = require('../middleware/verifyCurrentUser');
 
 router.post("/search-flights", createFlight);
-router.get("/flights", searchAndFilter);
+router.get("/flights", verifyCurrentUser, searchAndFilter);
 router.get("/getAllFlight", getAllFlight)
 
 module.exports = router;
